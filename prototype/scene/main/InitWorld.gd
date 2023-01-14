@@ -20,6 +20,8 @@ var _new_InputName := preload("res://library/InputName.gd").new()
 
 var _rng := RandomNumberGenerator.new()
 
+var borders = Rect2(0, 0, _new_DungeonSize.MAX_X, _new_DungeonSize.MAX_Y)
+
 func _ready() -> void:
 	_rng.randomize()
 
@@ -34,6 +36,12 @@ func _unhandled_input(event: InputEvent) -> void:
 
 		set_process_unhandled_input(false)
 
+func generate_level():
+	var walker = Walker.new(Vector2(1,1), borders)
+	var map = walker.walk(100)
+	walker.queue_free()
+	return map
+
 
 func _init_dwarf() -> void:
 	var dwarf: int = _rng.randi_range(3, 6)
@@ -43,7 +51,7 @@ func _init_dwarf() -> void:
 	while dwarf > 0:
 		x = _rng.randi_range(1, _new_DungeonSize.MAX_X - 1)
 		y = _rng.randi_range(1, _new_DungeonSize.MAX_Y - 1)
-
+		
 		if _ref_DungeonBoard.has_sprite(_new_GroupName.WALL, x, y) \
 				or _ref_DungeonBoard.has_sprite(_new_GroupName.DWARF, x, y):
 			continue
@@ -56,21 +64,16 @@ func _init_PC() -> void:
 
 
 func _init_floor() -> void:
-	for i in range(_new_DungeonSize.MAX_X):
-		for j in range(_new_DungeonSize.MAX_Y):
-			_create_sprite(Floor, _new_GroupName.FLOOR, i, j)
+	var floorspaces = generate_level()
+	for location in floorspaces:
+		_create_sprite(Floor, _new_GroupName.FLOOR, location.x, location.y)
 
 
 func _init_wall() -> void:
-	var shift: int = 2
-	var min_x: int = _new_DungeonSize.CENTER_X - shift
-	var max_x: int = _new_DungeonSize.CENTER_X + shift + 1
-	var min_y: int = _new_DungeonSize.CENTER_Y - shift
-	var max_y: int = _new_DungeonSize.CENTER_Y + shift + 1
-
-	for i in range(min_x, max_x):
-		for j in range(min_y, max_y):
-			_create_sprite(Wall, _new_GroupName.WALL, i, j)
+	for i in range(_new_DungeonSize.MAX_X):
+		for j in range(_new_DungeonSize.MAX_Y):
+			if !_ref_DungeonBoard.has_sprite(_new_GroupName.FLOOR, i, j):
+				_create_sprite(Wall, _new_GroupName.WALL, i, j)
 
 
 func _init_indicator() -> void:
