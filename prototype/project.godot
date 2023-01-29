@@ -8,22 +8,17 @@
 
 config_version=4
 
-_global_script_classes=[ {
-"base": "Node",
-"class": "Walker",
-"language": "GDScript",
-"path": "res://scene/main/Walker.gd"
-} ]
-_global_script_class_icons={
-"Walker": ""
-}
-
 [application]
 
 config/name="rlFirstPrototype"
 run/main_scene="res://scene/main/MainScene.tscn"
 run/low_processor_mode=true
 config/icon="res://resource/icon.png"
+
+[autoload]
+
+Walker="*res://scene/main/Walker.gd"
+GameData="*res://library/GameData.gd"
 
 [display]
 

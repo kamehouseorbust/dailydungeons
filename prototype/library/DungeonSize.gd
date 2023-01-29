@@ -5,3 +5,5 @@ const CENTER_X: int = 10
 const CENTER_Y: int = 7
 
 const ARROW_MARGIN: int = 32
+
+const WALKER_STEPS: int = 50
