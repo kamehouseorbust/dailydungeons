@@ -36,6 +36,8 @@ func _on_InitWorld_sprite_created(new_sprite: Sprite) -> void:
 		group = _new_GroupName.DWARF
 	elif new_sprite.is_in_group(_new_GroupName.WALL):
 		group = _new_GroupName.WALL
+	elif new_sprite.is_in_group(_new_GroupName.FLOOR):
+		group = _new_GroupName.FLOOR
 	else:
 		return
 
@@ -44,7 +46,7 @@ func _on_InitWorld_sprite_created(new_sprite: Sprite) -> void:
 
 
 func _init_dict() -> void:
-	var groups = [_new_GroupName.DWARF, _new_GroupName.WALL]
+	var groups = [_new_GroupName.DWARF, _new_GroupName.WALL, _new_GroupName.FLOOR]
 
 	for g in groups:
 		_sprite_dict[g] = {}

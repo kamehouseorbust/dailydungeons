@@ -18,14 +18,23 @@ var _new_DungeonSize := preload("res://library/DungeonSize.gd").new()
 var _new_GroupName := preload("res://library/GroupName.gd").new()
 var _new_InputName := preload("res://library/InputName.gd").new()
 
+onready var _ref_walker = get_node("/root/Walker")
+onready var _ref_GameData = get_node("/root/GameData")
+
 var _rng := RandomNumberGenerator.new()
 
+# we add -2 here so that the ring of walls around the dungeon is intact
+var borders = Rect2(1, 1, _new_DungeonSize.MAX_X-2, _new_DungeonSize.MAX_Y-2)
+
 func _ready() -> void:
-	_rng.randomize()
+	#_rng.randomize()
+	pass
 
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed(_new_InputName.INIT_WORLD):
+		# need a reliable way to wait for the seed to be given via API before init
+		_rng.seed = _ref_GameData._seed
 		_init_floor()
 		_init_wall()
 		_init_PC()
@@ -33,6 +42,13 @@ func _unhandled_input(event: InputEvent) -> void:
 		_init_indicator()
 
 		set_process_unhandled_input(false)
+
+func generate_level():
+	var x: int = _rng.randi_range(1, _new_DungeonSize.MAX_X - 1)
+	var y: int = _rng.randi_range(1, _new_DungeonSize.MAX_Y - 1)
+	_ref_walker.new_level(Vector2(x,y), borders)
+	var map = _ref_walker.walk(_new_DungeonSize.WALKER_STEPS)
+	return map
 
 
 func _init_dwarf() -> void:
@@ -43,7 +59,7 @@ func _init_dwarf() -> void:
 	while dwarf > 0:
 		x = _rng.randi_range(1, _new_DungeonSize.MAX_X - 1)
 		y = _rng.randi_range(1, _new_DungeonSize.MAX_Y - 1)
-
+		
 		if _ref_DungeonBoard.has_sprite(_new_GroupName.WALL, x, y) \
 				or _ref_DungeonBoard.has_sprite(_new_GroupName.DWARF, x, y):
 			continue
@@ -52,25 +68,21 @@ func _init_dwarf() -> void:
 
 
 func _init_PC() -> void:
-	_create_sprite(Player, _new_GroupName.PC, 0, 0)
+	#create player at start of walker
+	_create_sprite(Player, _new_GroupName.PC, _ref_walker.step_history[0].x,  _ref_walker.step_history[0].y)
 
 
 func _init_floor() -> void:
-	for i in range(_new_DungeonSize.MAX_X):
-		for j in range(_new_DungeonSize.MAX_Y):
-			_create_sprite(Floor, _new_GroupName.FLOOR, i, j)
+	var floorspaces = generate_level()
+	for location in floorspaces:
+		_create_sprite(Floor, _new_GroupName.FLOOR, location.x, location.y)
 
 
 func _init_wall() -> void:
-	var shift: int = 2
-	var min_x: int = _new_DungeonSize.CENTER_X - shift
-	var max_x: int = _new_DungeonSize.CENTER_X + shift + 1
-	var min_y: int = _new_DungeonSize.CENTER_Y - shift
-	var max_y: int = _new_DungeonSize.CENTER_Y + shift + 1
-
-	for i in range(min_x, max_x):
-		for j in range(min_y, max_y):
-			_create_sprite(Wall, _new_GroupName.WALL, i, j)
+	for i in range(_new_DungeonSize.MAX_X):
+		for j in range(_new_DungeonSize.MAX_Y):
+			if !_ref_DungeonBoard.has_sprite(_new_GroupName.FLOOR, i, j):
+				_create_sprite(Wall, _new_GroupName.WALL, i, j)
 
 
 func _init_indicator() -> void:
