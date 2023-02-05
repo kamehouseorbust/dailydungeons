@@ -15,10 +15,6 @@ import (
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
 )
 
-type MyEvent struct {
-	Name string `json:"name"`
-}
-
 type Seed struct {
 	Date string `json:"date"`
 	Seed string `json:"seed"`
@@ -36,7 +32,7 @@ func generateSeed(n int) string {
 	return sb.String()
 }
 
-func HandleRequest(ctx context.Context, name MyEvent) (string, error) {
+func HandleRequest(ctx context.Context) (string, error) {
 	rand.Seed(time.Now().UnixNano())
 
 	// Initialize a session that the SDK will use to load
