@@ -34,6 +34,7 @@ func _ready() -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed(_new_InputName.INIT_WORLD):
 		# need a reliable way to wait for the seed to be given via API before init
+		seed(_ref_GameData._seed)
 		_rng.seed = _ref_GameData._seed
 		_init_floor()
 		_init_wall()
