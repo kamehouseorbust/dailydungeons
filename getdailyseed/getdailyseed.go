@@ -16,7 +16,7 @@ import (
 
 type Seed struct {
 	Date string `json:"date"`
-	Seed string `json:"seed"`
+	Seed int    `json:"seed"`
 }
 
 const tableName string = "dailySeeds"

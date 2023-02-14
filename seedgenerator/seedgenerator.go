@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"math/rand"
-	"strings"
 	"time"
 
 	"github.com/aws/aws-lambda-go/lambda"
@@ -17,19 +16,13 @@ import (
 
 type Seed struct {
 	Date string `json:"date"`
-	Seed string `json:"seed"`
+	Seed int    `json:"seed"`
 }
 
-const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 const tableName string = "dailySeeds"
 
-func generateSeed(n int) string {
-	sb := strings.Builder{}
-	sb.Grow(n)
-	for i := 0; i < n; i++ {
-		sb.WriteByte(charset[rand.Intn(len(charset))])
-	}
-	return sb.String()
+func generateSeed() int {
+	return rand.Intn(9223372036854775807)
 }
 
 func HandleRequest(ctx context.Context) (string, error) {
@@ -47,7 +40,7 @@ func HandleRequest(ctx context.Context) (string, error) {
 	// Create seed item
 	seedItem := Seed{
 		Date: time.Now().Format("01-02-2006"),
-		Seed: generateSeed(20),
+		Seed: generateSeed(),
 	}
 	// Marshal for put operation
 	av, err := dynamodbattribute.MarshalMap(seedItem)
@@ -63,9 +56,9 @@ func HandleRequest(ctx context.Context) (string, error) {
 	if err != nil {
 		log.Fatalf("Got error putting item to dynamoDB: %s", err)
 	}
-	fmt.Printf("Successfully added seed: %s for date: %s", seedItem.Seed, seedItem.Date)
+	fmt.Printf("Successfully added seed: %d for date: %s", seedItem.Seed, seedItem.Date)
 
-	return fmt.Sprintf("Seed: %s", seedItem.Seed), nil
+	return fmt.Sprintf("Seed: %d", seedItem.Seed), nil
 }
 
 func main() {

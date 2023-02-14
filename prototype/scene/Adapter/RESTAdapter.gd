@@ -1,12 +1,9 @@
 extends Node
 
-# This scene currently uses mocked data, use mocky.io and the json "{"seed":xxxxxx}" for the body to mock.
-# Then modify the url variable.
-
 onready var _ref_GameData = get_node("/root/GameData")
 
-# mocked endpoint
-var url = "https://run.mocky.io/v3/65bd6c14-6d7b-4acd-a4e2-df39113b1ca0"
+# aws endpoint
+var url = "https://xiexdtcndc.execute-api.us-west-2.amazonaws.com/getdailyseed"
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
