@@ -1,6 +1,8 @@
 # dailydungeons
 
-[Design Document](https://docs.google.com/document/d/1vKGmTa8XdrN3arK2PMOAUYALrOcEzaPfGFZZ5bPPOIo/edit)
+A new roguelike dungeon generated every single day! Built in Godot, Golang, and leaning on AWS Lambda & DynamoDB.
+
+Design document available by request.
 
 Using Godot Engine v3.5.1
 
